@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f6c41d38-be15-4a70-97bc-b161121da1e1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/data_inspector.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pygb_dota2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_expansion.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_expansion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pygb_dota2.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygb_dota2.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,55 +14,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="pygb_dota2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pygb_dota2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="282" lean-forward="true" selection-start-line="282" selection-end-line="282" />
+            <state relative-caret-position="512">
+              <caret line="209" column="27" lean-forward="true" selection-start-line="209" selection-start-column="27" selection-end-line="209" selection-end-column="28" />
               <folding>
-                <element signature="e#250#961#0" />
-                <element signature="e#542#932#0" />
-                <element signature="e#684#908#0" />
-                <element signature="e#713#774#0" />
-                <element signature="e#818#879#0" />
-                <element signature="e#1014#1208#0" />
-                <element signature="e#1101#1176#0" />
-                <element signature="e#1260#1395#0" />
-                <element signature="e#1287#1395#0" />
-                <element signature="e#1321#1395#0" />
-                <element signature="e#1457#1643#0" />
-                <element signature="e#1703#1890#0" />
-                <element signature="e#1752#1890#0" />
-                <element signature="e#1818#1890#0" />
-                <element signature="e#1957#2618#0" />
-                <element signature="e#2326#2591#0" />
-                <element signature="e#2369#2591#0" />
-                <element signature="e#2671#2819#0" />
-                <element signature="e#2737#2795#0" />
-                <element signature="e#3194#3603#0" />
-                <element signature="e#3510#3959#0" />
-                <element signature="e#3630#3928#0" />
-                <element signature="e#3702#3856#0" />
-                <element signature="e#3744#3856#0" />
-                <element signature="e#4027#4262#0" />
-                <element signature="e#4334#4872#0" />
-                <element signature="e#4472#4829#0" />
-                <element signature="e#4576#4745#0" />
-                <element signature="e#4614#4745#0" />
-                <element signature="e#4936#5325#0" />
-                <element signature="e#5060#5290#0" />
-                <element signature="e#5132#5215#0" />
-                <element signature="e#5401#5659#0" />
-                <element signature="e#5723#6138#0" />
-                <element signature="e#5855#6095#0" />
-                <element signature="e#5927#6012#0" />
-                <element signature="e#6214#6504#0" />
-                <element signature="e#6574#7413#0" />
-                <element signature="e#7111#7219#0" />
-                <element signature="e#7576#9605#0" />
-                <element signature="e#9669#9909#0" />
-                <element signature="e#9974#10127#0" />
+                <element signature="e#0#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -71,10 +30,22 @@
       <file leaf-file-name="data_inspector.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data_inspector.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="16" column="6" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+            <state relative-caret-position="374">
+              <caret line="26" column="51" selection-start-line="26" selection-start-column="4" selection-end-line="26" selection-end-column="51" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data_expansion.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/data_expansion.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="401">
+              <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,7 +64,12 @@
     <findStrings>
       <find>total ma</find>
       <find>popularity of</find>
+      <find>savetx</find>
+      <find>wr</find>
     </findStrings>
+    <replaceStrings>
+      <replace>pop</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -102,11 +78,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/data_inspector.py" />
+        <option value="$PROJECT_DIR$/data_expansion.py" />
         <option value="$PROJECT_DIR$/pygb_dota2.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1400" />
@@ -117,7 +94,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -130,11 +107,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="compu pop&#9;null&#9;null&#10;popula&#9;null&#9;null&#10;against&#9;null&#9;null" />
+    <property name="SearchEverywhereHistoryKey" value="against win&#9;null&#9;null&#10;win rate pop&#9;null&#9;null&#10;compu pop&#9;null&#9;null&#10;popula&#9;null&#9;null&#10;against&#9;null&#9;null" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
@@ -260,37 +240,94 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info id="Image Layers" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="bottom" id="Event Log" sideWeight="0.50053304" side_tool="true" weight="0.32900432" />
-      <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.23268399" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info id="Capture Tool" />
-      <window_info id="Designer" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17803837" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50104165" side_tool="true" weight="0.33900106" />
+      <window_info anchor="right" id="Maven Projects" order="3" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49895832" visible="true" weight="0.2646121" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49946696" weight="0.32897604" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21822916" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info id="UI Designer" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3995749" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/pygb_dota2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4268">
+          <caret line="199" selection-start-line="199" selection-end-line="211" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_inspector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="1" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_expansion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="15" column="58" selection-start-line="15" selection-start-column="58" selection-end-line="15" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygb_dota2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4850">
+          <caret line="199" selection-start-line="199" selection-end-line="211" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_inspector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="1" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_expansion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="15" column="58" lean-forward="true" selection-start-line="15" selection-start-column="58" selection-end-line="15" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://D:/Python36/Lib/site-packages/botocore/docs/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
@@ -300,64 +337,109 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data_inspector.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="6" lean-forward="true" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+        <state relative-caret-position="374">
+          <caret line="26" column="51" selection-start-line="26" selection-start-column="4" selection-end-line="26" selection-end-column="51" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pygb_dota2.py">
+    <entry file="file://$PROJECT_DIR$/data_expansion.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="282" lean-forward="true" selection-start-line="282" selection-end-line="282" />
+        <state relative-caret-position="401">
+          <caret line="105" lean-forward="true" selection-start-line="105" selection-end-line="105" />
           <folding>
-            <element signature="e#250#961#0" />
-            <element signature="e#542#932#0" />
-            <element signature="e#684#908#0" />
-            <element signature="e#713#774#0" />
-            <element signature="e#818#879#0" />
-            <element signature="e#1014#1208#0" />
-            <element signature="e#1101#1176#0" />
-            <element signature="e#1260#1395#0" />
-            <element signature="e#1287#1395#0" />
-            <element signature="e#1321#1395#0" />
-            <element signature="e#1457#1643#0" />
-            <element signature="e#1703#1890#0" />
-            <element signature="e#1752#1890#0" />
-            <element signature="e#1818#1890#0" />
-            <element signature="e#1957#2618#0" />
-            <element signature="e#2326#2591#0" />
-            <element signature="e#2369#2591#0" />
-            <element signature="e#2671#2819#0" />
-            <element signature="e#2737#2795#0" />
-            <element signature="e#3194#3603#0" />
-            <element signature="e#3510#3959#0" />
-            <element signature="e#3630#3928#0" />
-            <element signature="e#3702#3856#0" />
-            <element signature="e#3744#3856#0" />
-            <element signature="e#4027#4262#0" />
-            <element signature="e#4334#4872#0" />
-            <element signature="e#4472#4829#0" />
-            <element signature="e#4576#4745#0" />
-            <element signature="e#4614#4745#0" />
-            <element signature="e#4936#5325#0" />
-            <element signature="e#5060#5290#0" />
-            <element signature="e#5132#5215#0" />
-            <element signature="e#5401#5659#0" />
-            <element signature="e#5723#6138#0" />
-            <element signature="e#5855#6095#0" />
-            <element signature="e#5927#6012#0" />
-            <element signature="e#6214#6504#0" />
-            <element signature="e#6574#7413#0" />
-            <element signature="e#7111#7219#0" />
-            <element signature="e#7576#9605#0" />
-            <element signature="e#9669#9909#0" />
-            <element signature="e#9974#10127#0" />
+            <element signature="e#0#14#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pygb_dota2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="209" column="27" lean-forward="true" selection-start-line="209" selection-start-column="27" selection-end-line="209" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Python 3.6 interpreter library</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>Python 3.6</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>dota2_pred</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>
