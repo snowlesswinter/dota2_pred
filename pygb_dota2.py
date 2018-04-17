@@ -110,25 +110,32 @@ def compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate):
 def compute_popularity_features_impl(popularity, heroes):
     avg_popularity = np.zeros(len(heroes))
     max_popularity = np.zeros(len(heroes))
+    min_popularity = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
         sum = 0
         max_value = 0
+        min_value = 1
         for i in range(0, 5):
             r = popularity[row[i]]
             sum += r
             max_value = max(r, max_value)
+            min_value = min(r, min_value)
 
         avg_popularity[index] = sum / 5
         max_popularity[index] = max_value
+        min_popularity[index] = min_value
 
-    return avg_popularity, max_popularity
+    return avg_popularity, max_popularity, min_popularity
 
 def compute_popularity_features(t1_pick, t2_pick, global_popularity):
-    t1_avg_popularity, t1_max_popularity = compute_popularity_features_impl(global_popularity, t1_pick)
-    t2_avg_popularity, t2_max_popularity = compute_popularity_features_impl(global_popularity, t2_pick)
+    t1_avg_popularity, t1_max_popularity, t1_min_popularity =\
+        compute_popularity_features_impl(global_popularity, t1_pick)
+    t2_avg_popularity, t2_max_popularity, t2_min_popularity =\
+        compute_popularity_features_impl(global_popularity, t2_pick)
 
-    return t1_avg_popularity, t1_max_popularity, t2_avg_popularity, t2_max_popularity
+    return t1_avg_popularity, t1_max_popularity, t1_min_popularity,\
+           t2_avg_popularity, t2_max_popularity, t2_min_popularity
 
 def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_rate, against_win_rate,
                              global_win_rate, global_popularity):
@@ -139,7 +146,7 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
     t1_avg_abs_wr, t1_max_abs_wr, t2_avg_abs_wr, t2_max_abs_wr = \
         compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate)
     avg_against_wr, max_against_wr = compute_against_win_rate_features(against_win_rate, t1_pick, t2_pick)
-    t1_avg_popularity, t1_max_popularity, t2_avg_popularity, t2_max_popularity = \
+    t1_avg_popularity, t1_max_popularity, t1_min_popularity, t2_avg_popularity, t2_max_popularity, t2_min_popularity = \
         compute_popularity_features(t1_pick, t2_pick, global_popularity)
 
     #np.savetxt('C:/Users/tanjianwen/Desktop/win_rate_inspect.csv', avg_against_wr, fmt='%10.5f', delimiter=',')
@@ -162,8 +169,10 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
                       ('t2_max_abs_wr', t2_max_abs_wr),
                       ('t1_avg_popularity', t1_avg_popularity),
                       ('t1_max_popularity', t1_max_popularity),
+                      ('t1_min_popularity', t1_min_popularity),
                       ('t2_avg_popularity', t2_avg_popularity),
-                      ('t2_max_popularity', t2_max_popularity)]
+                      ('t2_max_popularity', t2_max_popularity),
+                      ('t2_min_popularity', t2_min_popularity)]
 
     enhanced_features = []
     for x in feature_tuples:
@@ -173,7 +182,7 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
     return enhanced_features
 
 def prepare_data(train_csv_path, test_csv_path, headers):
-    df = pd.read_csv(train_csv_path, names=headers, nrows=10000)
+    df = pd.read_csv(train_csv_path, names=headers, nrows=50000)
 
     df['is_train'] = np.random.uniform(0, 1, len(df)) <= .9
     test = df.copy()
@@ -187,13 +196,37 @@ def prepare_data2(train_csv_path, test_csv_path, headers):
 
     return train, test
 
+def prepare_data3(train_csv_path, test_csv_path, headers):
+    train = pd.read_csv(train_csv_path, names=headers)
+    test = pd.read_csv(test_csv_path, names=headers)
+
+    test['chosen'] = np.random.uniform(0, 1, len(test)) >= .9
+    test = test[test['chosen']==True]
+
+    return train, test
+
+def show_feature_importance(features, importances):
+    feature_importances = sorted(zip(features, importances), key=lambda t: t[1])
+
+    fig, ax = plt.subplots()
+
+    y_pos = np.arange(len(feature_importances))
+
+    ax.barh(y_pos, [x for (_, x) in feature_importances], color='green', ecolor='black')
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels([x for (x, _) in feature_importances])
+    ax.set_title('Feature Importance')
+
+    plt.tight_layout()
+    plt.show()
+
 def main():
     train_csv_path = 'C:/Users/tanjianwen/Desktop/dota2data/dota2Train.csv'
     test_csv_path = 'C:/Users/tanjianwen/Desktop/dota2data/dota2Test.csv'
     num_heroes = 113
     headers = ['score', 'cluster_id', 'game_mode', 'game_type'] + ['hero' + str(i) for i in range(0, num_heroes)]
 
-    train, test = prepare_data2(train_csv_path, test_csv_path, headers)
+    train, test = prepare_data(train_csv_path, test_csv_path, headers)
     print('Number of observations in the training data:', len(train))
     print('Number of observations in the test data:', len(test))
 
@@ -211,7 +244,7 @@ def main():
 
     # Train.
     combined_features = enhanced_features + headers[1:4]
-    clf = gdc(random_state=0, n_estimators=50, max_depth=4, subsample=0.2, learning_rate=0.1)
+    clf = gdc(random_state=0, n_estimators=20, max_depth=8, subsample=0.5, learning_rate=0.1)
     #clf = rfc(random_state=0) # For test.
     clf.fit(train[combined_features], y)
 
@@ -220,8 +253,8 @@ def main():
     create_enhanced_features(test, test_t1_pick, test_t2_pick, cooccurrence, co_win_rate,
                              against_win_rate, global_win_rate, global_popularity)
 
-    print('Score:', clf.score(test[combined_features], test['score']))
-    print('Feature Importance:',
-          sorted(zip(combined_features, clf.feature_importances_), key=lambda t: t[1], reverse=True))
+    print('Score:' + '\x1b[1;33;40m', clf.score(test[combined_features], test['score']), '\x1b[0m')
+    print('Score for train set:', clf.score(train[combined_features], train['score']))
+    show_feature_importance(combined_features, clf.feature_importances_)
 
 main()
