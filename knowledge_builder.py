@@ -111,7 +111,7 @@ def get_global_win_rate_file_path(data_path):
 def get_global_popularity_file_path(data_path):
     return data_path + r'\global_popularity.csv'
 
-def load_enhanced_info_if_existed(num_heroes):
+def load_knowledge_if_existed(num_heroes):
     data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
     headers = ['hero' + str(i) for i in range(num_heroes)]
 
@@ -124,11 +124,11 @@ def load_enhanced_info_if_existed(num_heroes):
     global_pop_df = pd.read_csv(get_global_popularity_file_path(data_path), names=['unused'], delimiter=',',
                                 skipinitialspace=True)
 
-    print('Archived information loaded.')
+    print('Archived knowledge loaded.')
     return cooc_df.as_matrix(), co_wr_df.as_matrix(), against_wr_df.as_matrix(),\
            global_wr_df.as_matrix().flatten(), global_pop_df.as_matrix().flatten()
 
-def archive_enhanced_info(cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity):
+def archive_knowledge(cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity):
     data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
 
     np.savetxt(get_cooccurrence_file_path(data_path), cooccurrence, fmt='%i', delimiter=',')
@@ -137,13 +137,13 @@ def archive_enhanced_info(cooccurrence, co_win_rate, against_win_rate, global_wi
     np.savetxt(get_global_win_rate_file_path(data_path), global_win_rate, fmt='%10.5f', delimiter=',')
     np.savetxt(get_global_popularity_file_path(data_path), global_popularity, fmt='%10.5f', delimiter=',')
 
-def build_enhanced_info(t1_pick, t2_pick, winners, num_heroes):
+def build_knowledge(t1_pick, t2_pick, winners, num_heroes):
     try:
-        return load_enhanced_info_if_existed(num_heroes)
+        return load_knowledge_if_existed(num_heroes)
     except FileNotFoundError:
         pass
 
-    print('No archives found. Start building enhanced information..')
+    print('No archives found. Start building knowledge..')
 
     win_pick, lose_pick = classify_picks(winners, t1_pick, t2_pick)
     cooccurrence = compute_cooccurrence(t1_pick, t2_pick, num_heroes)
@@ -151,5 +151,5 @@ def build_enhanced_info(t1_pick, t2_pick, winners, num_heroes):
     against_win_rate = compute_against_win_rate(win_pick, lose_pick, num_heroes)
     global_win_rate, global_popularity = compute_win_rate_and_popularity(win_pick, lose_pick, num_heroes)
 
-    archive_enhanced_info(cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity)
+    archive_knowledge(cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity)
     return cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity

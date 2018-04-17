@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-import data_expansion as de
+import knowledge_builder as kb
 
 from sklearn.ensemble import GradientBoostingClassifier as gdc
 from sklearn.ensemble import RandomForestClassifier as rfc
@@ -202,7 +202,7 @@ def main():
     y = train['score']
     train_t1_pick, train_t2_pick = extract_heroes_picks(train[hero_columns], num_heroes)
     cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity =\
-        de.build_enhanced_info(train_t1_pick, train_t2_pick, y, num_heroes)
+        kb.build_knowledge(train_t1_pick, train_t2_pick, y, num_heroes)
 
     #train_t1_pick, train_t2_pick = extract_heroes_picks(train[hero_columns], num_heroes)
     enhanced_features = create_enhanced_features(train, train_t1_pick, train_t2_pick,
@@ -221,6 +221,7 @@ def main():
                              against_win_rate, global_win_rate, global_popularity)
 
     print('Score:', clf.score(test[combined_features], test['score']))
-    print('Feature Importance:', list(zip(combined_features, clf.feature_importances_)))
+    print('Feature Importance:',
+          sorted(zip(combined_features, clf.feature_importances_), key=lambda t: t[1], reverse=True))
 
 main()
