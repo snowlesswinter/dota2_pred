@@ -1,6 +1,9 @@
+import os.path
+import time
+
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 import knowledge_builder as kb
 
@@ -35,35 +38,46 @@ def extract_heroes_picks(raw_matches, num_heroes):
 def compute_coop_features_impl(cooperation, heroes):
     avg_cooc = np.zeros(len(heroes))
     max_cooc = np.zeros(len(heroes))
+    min_cooc = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
         sum = 0
         max_value = 0
+        min_value = 1
         for i in range(0, 5):
             for j in range(i + 1, 5):
                 coop = cooperation[row[i]][row[j]]
                 sum += coop
                 max_value = max(coop, max_value)
+                min_value = min(coop, min_value)
 
         avg_cooc[index] = sum / 10
         max_cooc[index] = max_value
+        min_cooc[index] = min_value
 
-    return avg_cooc, max_cooc
+    return avg_cooc, max_cooc, min_cooc
 
 def compute_cooc_features(t1_pick, t2_pick, cooccurrence):
-    t1_avg_cooc, t1_max_cooc = compute_coop_features_impl(cooccurrence, t1_pick)
-    t2_avg_cooc, t2_max_cooc = compute_coop_features_impl(cooccurrence, t2_pick)
+    t1_avg_cooc, t1_max_cooc, t1_min_cooc = compute_coop_features_impl(cooccurrence, t1_pick)
+    t2_avg_cooc, t2_max_cooc, t2_min_cooc = compute_coop_features_impl(cooccurrence, t2_pick)
 
-    return t1_avg_cooc, t1_max_cooc, t2_avg_cooc, t2_max_cooc
+    avg_cooc_diff = t1_avg_cooc - t2_avg_cooc
+    max_cooc_diff = t1_max_cooc - t2_max_cooc
+    min_cooc_diff = t1_min_cooc - t2_min_cooc
+
+    return t1_avg_cooc, t1_max_cooc, t1_min_cooc, t2_avg_cooc, t2_max_cooc, t2_min_cooc,\
+           avg_cooc_diff, max_cooc_diff, min_cooc_diff
 
 def compute_co_win_rate_features(t1_pick, t2_pick, co_win):
-    t1_avg_co_wr, t1_max_co_wr = compute_coop_features_impl(co_win, t1_pick)
-    t2_avg_co_wr, t2_max_co_wr = compute_coop_features_impl(co_win, t2_pick)
+    t1_avg_co_wr, t1_max_co_wr, t1_min_co_wr = compute_coop_features_impl(co_win, t1_pick)
+    t2_avg_co_wr, t2_max_co_wr, t2_min_co_wr = compute_coop_features_impl(co_win, t2_pick)
 
     avg_co_wr_diff = t1_avg_co_wr - t2_avg_co_wr
     max_co_wr_diff = t1_max_co_wr - t2_max_co_wr
+    min_co_wr_diff = t1_min_co_wr - t2_min_co_wr
 
-    return t1_avg_co_wr, t1_max_co_wr, t2_avg_co_wr, t2_max_co_wr, avg_co_wr_diff, max_co_wr_diff
+    return t1_avg_co_wr, t1_max_co_wr, t1_min_co_wr, t2_avg_co_wr, t2_max_co_wr, t2_min_co_wr,\
+           avg_co_wr_diff, max_co_wr_diff, min_co_wr_diff
 
 def compute_against_win_rate_features(against, t1_pick, t2_pick):
     avg_against_wr = np.zeros(len(t1_pick))
@@ -87,25 +101,29 @@ def compute_against_win_rate_features(against, t1_pick, t2_pick):
 def compute_abs_win_rate_features_impl(win_rate, heroes):
     avg_abs_wr = np.zeros(len(heroes))
     max_abs_wr = np.zeros(len(heroes))
+    min_abs_wr = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
         sum = 0
         max_value = 0
+        min_value = 1
         for i in range(0, 5):
             r = win_rate[row[i]]
             sum += r
             max_value = max(r, max_value)
+            min_value = min(r, min_value)
 
         avg_abs_wr[index] = sum / 5
         max_abs_wr[index] = max_value
+        min_abs_wr[index] = min_value
 
-    return avg_abs_wr, max_abs_wr
+    return avg_abs_wr, max_abs_wr, min_abs_wr
 
 def compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate):
-    t1_avg_abs_wr, t1_max_abs_wr = compute_abs_win_rate_features_impl(global_win_rate, t1_pick)
-    t2_avg_abs_wr, t2_max_abs_wr = compute_abs_win_rate_features_impl(global_win_rate, t2_pick)
+    t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr = compute_abs_win_rate_features_impl(global_win_rate, t1_pick)
+    t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr = compute_abs_win_rate_features_impl(global_win_rate, t2_pick)
 
-    return t1_avg_abs_wr, t1_max_abs_wr, t2_avg_abs_wr, t2_max_abs_wr
+    return t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr
 
 def compute_popularity_features_impl(popularity, heroes):
     avg_popularity = np.zeros(len(heroes))
@@ -139,11 +157,13 @@ def compute_popularity_features(t1_pick, t2_pick, global_popularity):
 
 def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_rate, against_win_rate,
                              global_win_rate, global_popularity):
-    t1_avg_cooc, t1_max_cooc, t2_avg_cooc, t2_max_cooc = compute_cooc_features(t1_pick, t2_pick, cooccurrence)
-
-    t1_avg_co_wr, t1_max_co_wr, t2_avg_co_wr, t2_max_co_wr, avg_co_wr_diff, max_co_wr_diff =\
+    t1_avg_cooc, t1_max_cooc, t1_min_cooc, t2_avg_cooc, t2_max_cooc, t2_min_cooc,\
+    avg_cooc_diff, max_cooc_diff, min_cooc_diff =\
+        compute_cooc_features(t1_pick, t2_pick, cooccurrence)
+    t1_avg_co_wr, t1_max_co_wr, t1_min_co_wr, t2_avg_co_wr, t2_max_co_wr, t2_min_co_wr,\
+    avg_co_wr_diff, max_co_wr_diff, min_co_wr_diff =\
         compute_co_win_rate_features(t1_pick, t2_pick, co_win_rate)
-    t1_avg_abs_wr, t1_max_abs_wr, t2_avg_abs_wr, t2_max_abs_wr = \
+    t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr = \
         compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate)
     avg_against_wr, max_against_wr = compute_against_win_rate_features(against_win_rate, t1_pick, t2_pick)
     t1_avg_popularity, t1_max_popularity, t1_min_popularity, t2_avg_popularity, t2_max_popularity, t2_min_popularity = \
@@ -153,20 +173,30 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
 
     feature_tuples = [('t1_avg_cooc', t1_avg_cooc),
                       ('t1_max_cooc', t1_max_cooc),
+                      ('t1_min_cooc', t1_min_cooc),
                       ('t2_avg_cooc', t2_avg_cooc),
                       ('t2_max_cooc', t2_max_cooc),
+                      ('t2_min_cooc', t2_min_cooc),
+                      ('avg_cooc_diff', avg_cooc_diff),
+                      ('max_cooc_diff', max_cooc_diff),
+                      ('min_cooc_diff', min_cooc_diff),
                       ('t1_avg_co_wr', t1_avg_co_wr),
                       ('t1_max_co_wr', t1_max_co_wr),
+                      ('t1_min_co_wr', t1_min_co_wr),
                       ('t2_avg_co_wr', t2_avg_co_wr),
                       ('t2_max_co_wr', t2_max_co_wr),
+                      ('t2_min_co_wr', t2_min_co_wr),
                       ('avg_co_wr_diff', avg_co_wr_diff),
                       ('max_co_wr_diff', max_co_wr_diff),
+                      ('min_co_wr_diff', min_co_wr_diff),
                       ('avg_against_wr', avg_against_wr),
                       ('max_against_wr', max_against_wr),
                       ('t1_avg_abs_wr', t1_avg_abs_wr),
                       ('t1_max_abs_wr', t1_max_abs_wr),
+                      ('t1_min_abs_wr', t1_min_abs_wr),
                       ('t2_avg_abs_wr', t2_avg_abs_wr),
                       ('t2_max_abs_wr', t2_max_abs_wr),
+                      ('t2_min_abs_wr', t2_min_abs_wr),
                       ('t1_avg_popularity', t1_avg_popularity),
                       ('t1_max_popularity', t1_max_popularity),
                       ('t1_min_popularity', t1_min_popularity),
@@ -182,7 +212,7 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
     return enhanced_features
 
 def prepare_data(train_csv_path, test_csv_path, headers):
-    df = pd.read_csv(train_csv_path, names=headers, nrows=50000)
+    df = pd.read_csv(train_csv_path, names=headers, nrows=90000)
 
     df['is_train'] = np.random.uniform(0, 1, len(df)) <= .9
     test = df.copy()
@@ -204,6 +234,12 @@ def prepare_data3(train_csv_path, test_csv_path, headers):
     test = test[test['chosen']==True]
 
     return train, test
+
+def archive_train_set(train_dataset, score):
+    if 'is_train' in train_dataset.columns:
+        data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
+        id = '%.4f_' % score + str(len(train_dataset)) + time.strftime("_%y%h%d-%H%M%S")
+        np.savetxt(data_path + r'\train_rows_chosen_' + id + '.csv', train_dataset['is_train'], fmt='%i')
 
 def show_feature_importance(features, importances):
     feature_importances = sorted(zip(features, importances), key=lambda t: t[1])
@@ -253,8 +289,10 @@ def main():
     create_enhanced_features(test, test_t1_pick, test_t2_pick, cooccurrence, co_win_rate,
                              against_win_rate, global_win_rate, global_popularity)
 
-    print('Score:' + '\x1b[1;33;40m', clf.score(test[combined_features], test['score']), '\x1b[0m')
+    score = clf.score(test[combined_features], test['score'])
+    print('Score:' + '\x1b[1;33;40m', score, '\x1b[0m')
     print('Score for train set:', clf.score(train[combined_features], train['score']))
+    archive_train_set(train, score)
     show_feature_importance(combined_features, clf.feature_importances_)
 
 main()

@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 def compare_popularity():
     data_path1 = 'C:/Users/tanjianwen/Desktop/dota2data/hero_popularity_tr.txt'
