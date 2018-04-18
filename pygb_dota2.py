@@ -105,6 +105,35 @@ def compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate):
 
     return t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr
 
+# Is the hero having a higher win rate the one that having a higher against win rate?
+def compute_union_win_rate_features(t1_pick, t2_pick, global_win_rate, against_win_rate):
+    t1_avg_union_wr = np.zeros(len(t1_pick))
+    t1_max_union_wr = np.zeros(len(t1_pick))
+    t1_min_union_wr = np.zeros(len(t1_pick))
+    t2_avg_union_wr = np.zeros(len(t2_pick))
+    t2_max_union_wr = np.zeros(len(t2_pick))
+    t2_min_union_wr = np.zeros(len(t2_pick))
+
+    for index, t1_row, t2_row in zip(range(len(t1_pick)), t1_pick, t2_pick):
+        t1_union_wr = [global_win_rate[t1_row[i]] * against_win_rate[t1_row[i]][t2_row[j]]
+                       for i in range(5) for j in range(5)]
+        t2_union_wr = [global_win_rate[t2_row[j]] * against_win_rate[t2_row[j]][t1_row[i]]
+                       for i in range(5) for j in range(5)]
+
+        t1_avg_union_wr[index] = statistics.mean(t1_union_wr)
+        t1_max_union_wr[index] = max(t1_union_wr)
+        t1_min_union_wr[index] = min(t1_union_wr)
+        t2_avg_union_wr[index] = statistics.mean(t2_union_wr)
+        t2_max_union_wr[index] = max(t2_union_wr)
+        t2_min_union_wr[index] = min(t2_union_wr)
+
+    avg_union_wr_diff = t1_avg_union_wr - t2_avg_union_wr
+    max_union_wr_diff = t1_max_union_wr - t2_max_union_wr
+    min_union_wr_diff = t1_min_union_wr - t2_min_union_wr
+
+    return t1_avg_union_wr, t1_max_union_wr, t1_min_union_wr, t2_avg_union_wr, t2_max_union_wr, t2_min_union_wr,\
+           avg_union_wr_diff, max_union_wr_diff, min_union_wr_diff
+
 def compute_popularity_features_impl(popularity, heroes):
     avg_popularity = np.zeros(len(heroes))
     max_popularity = np.zeros(len(heroes))
@@ -135,10 +164,13 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
     t1_avg_co_wr, t1_max_co_wr, t1_min_co_wr, t2_avg_co_wr, t2_max_co_wr, t2_min_co_wr,\
     avg_co_wr_diff, max_co_wr_diff, min_co_wr_diff =\
         compute_co_win_rate_features(t1_pick, t2_pick, co_win_rate)
-    t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr = \
+    t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr =\
         compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate)
     avg_against_wr, med_against_wr, max_against_wr, min_against_wr =\
         compute_against_win_rate_features(against_win_rate, t1_pick, t2_pick)
+    t1_avg_union_wr, t1_max_union_wr, t1_min_union_wr, t2_avg_union_wr, t2_max_union_wr, t2_min_union_wr,\
+    avg_union_wr_diff, max_union_wr_diff, min_union_wr_diff =\
+        compute_union_win_rate_features(t1_pick, t2_pick, global_win_rate, against_win_rate)
     t1_avg_popularity, t1_max_popularity, t1_min_popularity, t2_avg_popularity, t2_max_popularity, t2_min_popularity = \
         compute_popularity_features(t1_pick, t2_pick, global_popularity)
 
@@ -166,6 +198,15 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
                       ('med_against_wr', med_against_wr),
                       ('max_against_wr', max_against_wr),
                       ('min_against_wr', min_against_wr),
+                      ('t1_avg_union_wr', t1_avg_union_wr),
+                      ('t1_max_union_wr', t1_max_union_wr),
+                      ('t1_min_union_wr', t1_min_union_wr),
+                      ('t2_avg_union_wr', t2_avg_union_wr),
+                      ('t2_max_union_wr', t2_max_union_wr),
+                      ('t2_min_union_wr', t2_min_union_wr),
+                      ('avg_union_wr_diff', avg_union_wr_diff),
+                      ('max_union_wr_diff', max_union_wr_diff),
+                      ('min_union_wr_diff', min_union_wr_diff),
                       ('t1_avg_abs_wr', t1_avg_abs_wr),
                       ('t1_max_abs_wr', t1_max_abs_wr),
                       ('t1_min_abs_wr', t1_min_abs_wr),

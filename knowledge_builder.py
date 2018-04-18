@@ -43,8 +43,7 @@ def compute_co_win_rate(win_pick, cooccurrence, num_heroes):
     return co_win_rate
 
 def compute_against_count(against, t1_pick, t2_pick):
-    for index, t1_row in enumerate(t1_pick):
-        t2_row = t2_pick[index]
+    for t1_row, t2_row in zip(t1_pick, t2_pick):
         for i in range(0, 5):
             for j in range(0, 5):
                 against[t1_row[i]][t2_row[j]] += 1
