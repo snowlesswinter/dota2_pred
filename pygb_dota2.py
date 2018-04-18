@@ -1,4 +1,5 @@
 import os.path
+import statistics
 import time
 
 import matplotlib.pyplot as plt
@@ -41,19 +42,10 @@ def compute_coop_features_impl(cooperation, heroes):
     min_cooc = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
-        sum = 0
-        max_value = 0
-        min_value = 1
-        for i in range(0, 5):
-            for j in range(i + 1, 5):
-                coop = cooperation[row[i]][row[j]]
-                sum += coop
-                max_value = max(coop, max_value)
-                min_value = min(coop, min_value)
-
-        avg_cooc[index] = sum / 10
-        max_cooc[index] = max_value
-        min_cooc[index] = min_value
+        coop = [cooperation[row[i]][row[j]] for i in range(5) for j in range(i + 1, 5)]
+        avg_cooc[index] = statistics.mean(coop)
+        max_cooc[index] = max(coop)
+        min_cooc[index] = min(coop)
 
     return avg_cooc, max_cooc, min_cooc
 
@@ -81,22 +73,18 @@ def compute_co_win_rate_features(t1_pick, t2_pick, co_win):
 
 def compute_against_win_rate_features(against, t1_pick, t2_pick):
     avg_against_wr = np.zeros(len(t1_pick))
+    med_against_wr = np.zeros(len(t1_pick))
     max_against_wr = np.zeros(len(t1_pick))
+    min_against_wr = np.zeros(len(t1_pick))
 
-    for index, t1_row in enumerate(t1_pick):
-        sum = 0
-        max_value = 0
-        t2_row = t2_pick[index]
-        for i in range(0, 5):
-            for j in range(0, 5):
-                against_wr = against[t1_row[i]][t2_row[j]]
-                sum += against_wr
-                max_value = max(against_wr, max_value)
+    for index, t1_row, t2_row in zip(range(len(t1_pick)), t1_pick, t2_pick):
+        against_wr = [against[t1_row[i]][t2_row[j]] for i in range(5) for j in range(5)]
+        avg_against_wr[index] = statistics.mean(against_wr)
+        med_against_wr[index] = statistics.median(against_wr)
+        max_against_wr[index] = max(against_wr)
+        min_against_wr[index] = min(against_wr)
 
-        avg_against_wr[index] = sum / 25
-        max_against_wr[index] = max_value
-
-    return avg_against_wr, max_against_wr
+    return avg_against_wr, med_against_wr, max_against_wr, min_against_wr
 
 def compute_abs_win_rate_features_impl(win_rate, heroes):
     avg_abs_wr = np.zeros(len(heroes))
@@ -104,18 +92,10 @@ def compute_abs_win_rate_features_impl(win_rate, heroes):
     min_abs_wr = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
-        sum = 0
-        max_value = 0
-        min_value = 1
-        for i in range(0, 5):
-            r = win_rate[row[i]]
-            sum += r
-            max_value = max(r, max_value)
-            min_value = min(r, min_value)
-
-        avg_abs_wr[index] = sum / 5
-        max_abs_wr[index] = max_value
-        min_abs_wr[index] = min_value
+        wr = [win_rate[row[i]] for i in range(5)]
+        avg_abs_wr[index] = statistics.mean(wr)
+        max_abs_wr[index] = max(wr)
+        min_abs_wr[index] = min(wr)
 
     return avg_abs_wr, max_abs_wr, min_abs_wr
 
@@ -131,18 +111,10 @@ def compute_popularity_features_impl(popularity, heroes):
     min_popularity = np.zeros(len(heroes))
 
     for index, row in enumerate(heroes):
-        sum = 0
-        max_value = 0
-        min_value = 1
-        for i in range(0, 5):
-            r = popularity[row[i]]
-            sum += r
-            max_value = max(r, max_value)
-            min_value = min(r, min_value)
-
-        avg_popularity[index] = sum / 5
-        max_popularity[index] = max_value
-        min_popularity[index] = min_value
+        p = [popularity[row[i]] for i in range(5)]
+        avg_popularity[index] = statistics.mean(p)
+        max_popularity[index] = max(p)
+        min_popularity[index] = min(p)
 
     return avg_popularity, max_popularity, min_popularity
 
@@ -165,7 +137,8 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
         compute_co_win_rate_features(t1_pick, t2_pick, co_win_rate)
     t1_avg_abs_wr, t1_max_abs_wr, t1_min_abs_wr, t2_avg_abs_wr, t2_max_abs_wr, t2_min_abs_wr = \
         compute_abs_win_rate_features(t1_pick, t2_pick, global_win_rate)
-    avg_against_wr, max_against_wr = compute_against_win_rate_features(against_win_rate, t1_pick, t2_pick)
+    avg_against_wr, med_against_wr, max_against_wr, min_against_wr =\
+        compute_against_win_rate_features(against_win_rate, t1_pick, t2_pick)
     t1_avg_popularity, t1_max_popularity, t1_min_popularity, t2_avg_popularity, t2_max_popularity, t2_min_popularity = \
         compute_popularity_features(t1_pick, t2_pick, global_popularity)
 
@@ -190,7 +163,9 @@ def create_enhanced_features(data_frame, t1_pick, t2_pick, cooccurrence, co_win_
                       ('max_co_wr_diff', max_co_wr_diff),
                       ('min_co_wr_diff', min_co_wr_diff),
                       ('avg_against_wr', avg_against_wr),
+                      ('med_against_wr', med_against_wr),
                       ('max_against_wr', max_against_wr),
+                      ('min_against_wr', min_against_wr),
                       ('t1_avg_abs_wr', t1_avg_abs_wr),
                       ('t1_max_abs_wr', t1_max_abs_wr),
                       ('t1_min_abs_wr', t1_min_abs_wr),
