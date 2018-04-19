@@ -96,22 +96,22 @@ def compute_win_rate_and_popularity(win_pick, lose_pick, num_heroes):
     return global_win_rate, global_popularity
 
 def get_cooccurrence_file_path(data_path):
-    return data_path + r'\cooccurrence.csv'
+    return data_path + '/cooccurrence.csv'
 
 def get_co_win_rate_file_path(data_path):
-    return data_path + r'\co_win_rate.csv'
+    return data_path + '/co_win_rate.csv'
 
 def get_against_win_rate_file_path(data_path):
-    return data_path + r'\against_win_rate.csv'
+    return data_path + '/against_win_rate.csv'
 
 def get_global_win_rate_file_path(data_path):
-    return data_path + r'\global_win_rate.csv'
+    return data_path + '/global_win_rate.csv'
 
 def get_global_popularity_file_path(data_path):
-    return data_path + r'\global_popularity.csv'
+    return data_path + '/global_popularity.csv'
 
 def load_knowledge_if_existed(num_heroes):
-    data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
+    data_path = os.path.dirname(os.path.abspath(__file__)) + '/data'
     headers = ['hero' + str(i) for i in range(num_heroes)]
 
     cooc_df = pd.read_csv(get_cooccurrence_file_path(data_path), names=headers, delimiter=',', skipinitialspace=True)
@@ -128,7 +128,7 @@ def load_knowledge_if_existed(num_heroes):
            global_wr_df.as_matrix().flatten(), global_pop_df.as_matrix().flatten()
 
 def archive_knowledge(cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity):
-    data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
+    data_path = os.path.dirname(os.path.abspath(__file__)) + '/data'
 
     np.savetxt(get_cooccurrence_file_path(data_path), cooccurrence, fmt='%i', delimiter=',')
     np.savetxt(get_co_win_rate_file_path(data_path), co_win_rate, fmt='%10.5f', delimiter=',')

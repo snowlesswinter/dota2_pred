@@ -10,6 +10,8 @@ import knowledge_builder as kb
 
 from sklearn.ensemble import GradientBoostingClassifier as gdc
 from sklearn.ensemble import RandomForestClassifier as rfc
+from sklearn.model_selection import GridSearchCV as gscv
+from sklearn.model_selection import StratifiedKFold as skf
 
 def extract_heroes_picks(raw_matches, num_heroes):
     num_rows = raw_matches.shape[0]
@@ -253,9 +255,9 @@ def prepare_data3(train_csv_path, test_csv_path, headers):
 
 def archive_train_set(train_dataset, score):
     if 'is_train' in train_dataset.columns:
-        data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
+        data_path = os.path.dirname(os.path.abspath(__file__)) + '/data'
         id = '%.4f_' % score + str(len(train_dataset)) + time.strftime("_%y%h%d-%H%M%S")
-        np.savetxt(data_path + r'\train_rows_chosen_' + id + '.csv', train_dataset['is_train'], fmt='%i')
+        np.savetxt(data_path + '/train_rows_chosen_' + id + '.csv', train_dataset['is_train'], fmt='%i')
 
 def show_feature_importance(features, importances):
     feature_importances = sorted(zip(features, importances), key=lambda t: t[1])
@@ -272,38 +274,44 @@ def show_feature_importance(features, importances):
     plt.tight_layout()
     plt.show()
 
-def main():
-    train_csv_path = 'C:/Users/tanjianwen/Desktop/dota2data/dota2Train.csv'
-    test_csv_path = 'C:/Users/tanjianwen/Desktop/dota2data/dota2Test.csv'
-    num_heroes = 113
-    headers = ['score', 'cluster_id', 'game_mode', 'game_type'] + ['hero' + str(i) for i in range(0, num_heroes)]
-
-    train, test = prepare_data(train_csv_path, test_csv_path, headers)
-    print('Number of observations in the training data:', len(train))
-    print('Number of observations in the test data:', len(test))
-
+def enhance_features(headers, train, test, num_heroes):
     hero_columns = headers[4:]
-    #train = test # For test.
-    y = train['score']
     train_t1_pick, train_t2_pick = extract_heroes_picks(train[hero_columns], num_heroes)
-    cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity =\
-        kb.build_knowledge(train_t1_pick, train_t2_pick, y, num_heroes)
+    cooccurrence, co_win_rate, against_win_rate, global_win_rate, global_popularity = \
+        kb.build_knowledge(train_t1_pick, train_t2_pick, train['score'], num_heroes)
 
-    #train_t1_pick, train_t2_pick = extract_heroes_picks(train[hero_columns], num_heroes)
     enhanced_features = create_enhanced_features(train, train_t1_pick, train_t2_pick,
                                                  cooccurrence, co_win_rate, against_win_rate,
                                                  global_win_rate, global_popularity)
 
-    # Train.
-    combined_features = enhanced_features + headers[1:4]
-    clf = gdc(random_state=0, n_estimators=20, max_depth=8, subsample=0.5, learning_rate=0.1)
-    #clf = rfc(random_state=0) # For test.
-    clf.fit(train[combined_features], y)
+    if not test is None:
+        test_t1_pick, test_t2_pick = extract_heroes_picks(test[hero_columns], num_heroes)
+        create_enhanced_features(test, test_t1_pick, test_t2_pick, cooccurrence, co_win_rate,
+                                 against_win_rate, global_win_rate, global_popularity)
 
-    # Predict.
-    test_t1_pick, test_t2_pick = extract_heroes_picks(test[hero_columns], num_heroes)
-    create_enhanced_features(test, test_t1_pick, test_t2_pick, cooccurrence, co_win_rate,
-                             against_win_rate, global_win_rate, global_popularity)
+    return enhanced_features
+
+def use_splitted_data_set(train, combined_features):
+    splitter = skf(5, shuffle=True, random_state=0)
+    sp_iter = splitter.split(train[combined_features], train['score'])
+    chosen_index, _ = next(sp_iter)
+    return train.iloc[chosen_index]
+
+def train_and_evaluate(train_csv_path, test_csv_path, headers, num_heroes):
+    train, test = prepare_data(train_csv_path, test_csv_path, headers)
+    print('Number of observations in the training data:', len(train))
+    print('Number of observations in the test data:', len(test))
+
+    #train = test # For test.
+    enhanced_features = enhance_features(headers, train, test, num_heroes)
+    combined_features = enhanced_features + headers[1:4]
+
+    # Use the set from grid search.
+    #train = use_splitted_data_set(train, combined_features)
+
+    clf = gdc(random_state=0, n_estimators=30, max_depth=8, subsample=0.5, learning_rate=0.05)
+    #clf = rfc(random_state=0) # For test.
+    clf.fit(train[combined_features], train['score'])
 
     score = clf.score(test[combined_features], test['score'])
     print('Score:' + '\x1b[1;33;40m', score, '\x1b[0m')
@@ -311,4 +319,43 @@ def main():
     archive_train_set(train, score)
     show_feature_importance(combined_features, clf.feature_importances_)
 
-main()
+def perform_grid_search(train_csv_path, headers, num_heroes):
+    df = pd.read_csv(train_csv_path, names=headers, nrows=10000)
+    print('Number of observations in the training data:', len(df))
+
+    enhanced_features = enhance_features(headers, df, None, num_heroes)
+    combined_features = enhanced_features + headers[1:4]
+
+    tuned_parameters = {'n_estimators': [50, 100],
+                        'max_depth': [6, 8],
+                        'subsample': [0.5],
+                        'learning_rate': [0.01, 0.05]}
+    splitter = skf(5, shuffle=True, random_state=0)
+    clf = gscv(gdc(), tuned_parameters, cv=splitter, n_jobs=-1)
+    clf.fit(df[combined_features], df['score'])
+
+    print("Grid scores on development set:")
+    print()
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in sorted(zip(means, stds, clf.cv_results_['params'])):
+        print("%0.4f (+/-%0.04f) for %r" % (mean, std * 2, params))
+
+    print()
+    print('Best score: ' + '\x1b[1;33;40m', clf.best_score_, '\x1b[0m')
+    print('Best parameters set found on development set:')
+    print()
+    print(clf.best_params_)
+
+def main():
+    data_path = os.path.dirname(os.path.abspath(__file__)) + r'\data'
+    train_csv_path = data_path + '/dota2Train.csv'
+    test_csv_path = data_path + '/dota2Test.csv'
+    num_heroes = 113
+    headers = ['score', 'cluster_id', 'game_mode', 'game_type'] + ['hero' + str(i) for i in range(0, num_heroes)]
+
+    #train_and_evaluate(train_csv_path, test_csv_path, headers, num_heroes)
+    perform_grid_search(train_csv_path, headers, num_heroes)
+
+if __name__ == '__main__':
+    main()
